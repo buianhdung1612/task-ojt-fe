@@ -48,3 +48,25 @@ a.active div {
   background-color: #CF4E3E;
   color: #fff;
 }
+
+.icon-wrapper .icon-finished {
+  display: none;
+}
+
+.icon-wrapper:hover .icon-finished {
+  display: block;
+}
+
+.icon-wrapper:hover .icon-finish {
+  display: none;
+}
+
+.task-item .icon-delete,
+.task-item .icon-edit {
+  display: none;
+}
+
+.task-item:hover .icon-delete,
+.task-item:hover .icon-edit {
+  display: block;
+}

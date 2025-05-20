@@ -2,6 +2,7 @@ import { useContext, useEffect, useState } from 'react';
 import { LiaCircleSolid } from "react-icons/lia";
 import { GoPencil } from "react-icons/go";
 import { RiDeleteBin6Line } from "react-icons/ri";
+import { CiCircleCheck } from "react-icons/ci";
 import { UserContext } from '../Route/ProtectedRoute';
 import Cookies from "js-cookie";
 
@@ -20,7 +21,7 @@ export const TaskList = (props) => {
     const [editTask, setEditTask] = useState({ title: '', content: '', timeStart: '', timeFinish: '' });
 
 
-    useEffect(() => {
+    const fetchApi = () => {
         fetch(api, {
             headers: { Authorization: `Bearer ${token}` }
         })
@@ -28,6 +29,10 @@ export const TaskList = (props) => {
             .then(data => {
                 setTasks(data);
             });
+    }
+
+    useEffect(() => {
+        fetchApi();
     }, [])
 
     const addTask = () => {
@@ -53,7 +58,7 @@ export const TaskList = (props) => {
             .then(res => res.json())
             .then(data => {
                 if (data.code == "success") {
-                    setTasks([...tasks, data.data]);
+                    fetchApi();
                     setTimeStart('');
                     setTimeFinish('');
                     setContent('');
@@ -99,7 +104,16 @@ export const TaskList = (props) => {
             .then(res => res.json())
             .then(data => {
                 if (data.code == "success") {
-                    setTasks(data.tasks);
+                    fetchApi();
+                    setTimeStart('');
+                    setTimeFinish('');
+                    setContent('');
+                    setTitle('');
+                    setShowForm(false);
+                    setEditingTaskId(null);
+                }
+                else {
+                    fetchApi();
                     setTimeStart('');
                     setTimeFinish('');
                     setContent('');
@@ -128,25 +142,55 @@ export const TaskList = (props) => {
             .then(res => res.json())
             .then(data => {
                 if (data.code == "success") {
-                    setTasks(data.tasks);
+                    fetchApi();
+                }
+            })
+    }
+
+    const handleClickFinish = (id) => {
+        const data = {
+            id: id,
+            status: "finish"
+        };
+
+        console.log(data);
+
+        fetch('https://task-ojt.onrender.com/tasks/changeStatus', {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify(data)
+        })
+            .then(res => res.json())
+            .then(data => {
+                console.log(data);
+                if (data.code == "success") {
+                    fetchApi();
                 }
             })
     }
 
     return (
         <div className="task-list-container">
-            <div className='text-[#666] text-[14px] font-[400] flex items-center mt-[8px] mb-[16px]'>
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 16 16" aria-hidden="true" class="siIBvPn"><path fill="currentColor" fill-rule="evenodd" d="M8 14.001a6 6 0 1 1 0-12 6 6 0 0 1 0 12Zm0-1a5 5 0 1 0 0-10 5 5 0 0 0 0 10ZM5.146 8.147a.5.5 0 0 1 .708 0L7 9.294l3.146-3.147a.5.5 0 0 1 .708.708l-3.5 3.5a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 0-.708Z" clip-rule="evenodd"></path></svg>
-                <span className='ml-[5px]'>{tasks.length} tasks</span>
-            </div>
+            {tasks.length > 0 && (
+                <div className='text-[#666] text-[14px] font-[400] flex items-center mt-[8px] mb-[16px]'>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 16 16" aria-hidden="true" class="siIBvPn"><path fill="currentColor" fill-rule="evenodd" d="M8 14.001a6 6 0 1 1 0-12 6 6 0 0 1 0 12Zm0-1a5 5 0 1 0 0-10 5 5 0 0 0 0 10ZM5.146 8.147a.5.5 0 0 1 .708 0L7 9.294l3.146-3.147a.5.5 0 0 1 .708.708l-3.5 3.5a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 0-.708Z" clip-rule="evenodd"></path></svg>
+                    <span className='ml-[5px]'>{tasks.length} tasks</span>
+                </div>
+            )}
             <ul>
-                {tasks.map((task, index) => (
+                {tasks && tasks.map((task, index) => (
                     <div key={index}>
                         <li
-                            className={`task-item w-full flex items-center cursor-pointer pb-[30px] border-b border-solid border-[#eee] ${editingTaskId === task._id ? 'hidden' : ''}`}
+                            className={`task-item task-item w-full flex items-center cursor-pointer pb-[30px] border-b border-solid border-[#eee] ${editingTaskId === task._id ? 'hidden' : ''}`}
                         >
                             <div className='flex items-center flex-1'>
-                                <LiaCircleSolid className='text-[24px] text-[#999999] icon-finish' />
+                                <div className='icon-wrapper' onClick={() => handleClickFinish(task._id)}>
+                                    <LiaCircleSolid className='text-[24px] text-[#999999] icon-finish' />
+                                    <CiCircleCheck className='text-[22px] text-[#999999] icon-finished' />
+                                </div>
                                 <div className='ml-[8px] flex-1 mt-[12px]'>
                                     <div className='text-[14px] text-[#202020]'>
                                         <span className="task-item-text" style={{
@@ -172,9 +216,9 @@ export const TaskList = (props) => {
                                         handleEditClick(task);
                                         setShowForm(false);
                                     }}
-                                    className='text-[20px] text-[#999999] mr-[15px] w-7 h-7 p-1 rounded-[5px] hover:bg-[#EEEEEE]'
+                                    className='icon-edit text-[20px] text-[#999999] mr-[15px] w-7 h-7 p-1 rounded-[5px] hover:bg-[#EEEEEE]'
                                 />
-                                <RiDeleteBin6Line onClick={() => handleDelete(task._id)} className='text-[20px] text-[#999999] w-7 h-7 p-1 rounded-[5px] hover:bg-[#EEEEEE]' />
+                                <RiDeleteBin6Line onClick={() => handleDelete(task._id)} className='icon-delete text-[20px] text-[#999999] w-7 h-7 p-1 rounded-[5px] hover:bg-[#EEEEEE]' />
                             </div>
                         </li>
                         {editingTaskId === task._id && (

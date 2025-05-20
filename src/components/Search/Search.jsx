@@ -1,19 +1,21 @@
-import  { useState } from 'react';
+import { useState } from 'react';
 import { PiCalendarDuotone } from "react-icons/pi";
 import { TbCalendarMonth } from "react-icons/tb";
 import { HiOutlineSquares2X2 } from "react-icons/hi2";
 import { IoMdClose } from "react-icons/io";
 import { RxCountdownTimer } from "react-icons/rx";
 import { Link } from 'react-router-dom';
+import { CiSearch } from "react-icons/ci";
+import Cookies from "js-cookie";
 
 export function Search({ onClose, onSearch }) {
+    const token = Cookies.get("token");
     const [inputValue, setInputValue] = useState('');
     const [suggestions, setSuggestions] = useState([]);
     const [recentSearches, setRecentSearches] = useState(["Học bài", "Ngủ"]);
 
     const handleKeyDown = (e) => {
         if (e.key === 'Enter' && inputValue.trim()) {
-
             setRecentSearches(prev => {
                 const updated = [inputValue, ...prev.filter(item => item !== inputValue)];
                 return updated.slice(0, 7);
@@ -26,18 +28,29 @@ export function Search({ onClose, onSearch }) {
             setSuggestions([]);
         }
     };
+
     const handleDeleteRecent = (itemToDelete) => {
         setRecentSearches(prev => prev.filter(item => item !== itemToDelete));
     };
+
+    // const handleClickSearch = () => {
+    //     const keyword = inputValue;
+
+    //     fetch(`https://task-ojt.onrender.com/tasks?keyword=${keyword}`, {
+    //         headers: { Authorization: `Bearer ${token}` }
+    //     })
+    //         .then(res => res.json())
+    //         .then(data => {
+    //             console.log(data);
+    //         });
+    // }
 
 
     return (
         <div className="fixed inset-0 z-50 flex justify-center mb-[100px] items-center" onClick={onClose}>
             <div className="w-[650px] h-[450px] shadow-xl/30 rounded-[10px] bg-gray-50" onClick={(e) => e.stopPropagation()}>
-                <div className='flex border-b border-black/20 pb-2'>
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 ml-[15px] mt-[15px]">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
-                    </svg>
+                <div className='flex items-center border-b border-black/20 pb-2'>
+                    <CiSearch className='text-[#2A2A2A] text-[24px] mt-[15px] ml-[10px]' />
                     <input className='ml-[15px] mt-[15px] w-[550px] outline-none'
                         type="text" placeholder="Search or type a command..."
                         onKeyDown={handleKeyDown}
@@ -46,7 +59,7 @@ export function Search({ onClose, onSearch }) {
                 </div>
                 <div className='custom-scroll overflow-y-auto h-[395px]'>
 
-                    
+
                     {/* Suggestions // Đợi API */}
                     <div className="ml-[15px] mt-2 max-h-[150px]">
                         {suggestions.length > 0 ? (
@@ -71,11 +84,11 @@ export function Search({ onClose, onSearch }) {
                                         className="flex items-center justify-between px-3 py-2 hover:bg-gray-100 hover:border-l-2 hover:border-solid hover:border-[#dc4c3e] cursor-pointer"
                                     >
                                         <div className="flex items-center">
-                                            <RxCountdownTimer className='text-[#666] text-[24px] ml-1.5'/>
+                                            <RxCountdownTimer className='text-[#666] text-[24px] ml-1.5' />
                                             <span className='ml-[10px] text-[14px]'>{item}</span>
                                         </div>
                                         <div onClick={() => handleDeleteRecent(item)}>
-                                            <IoMdClose className='text-[18px] text-[#666]'/>
+                                            <IoMdClose className='text-[18px] text-[#666]' />
                                         </div>
                                     </div>
                                 ))}

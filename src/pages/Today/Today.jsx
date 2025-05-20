@@ -6,7 +6,7 @@ export const TodayPage = () => {
         <>
             <Title title="Today"/>
 
-            <TaskList api="https://task-ojt.onrender.com/tasks?today=true"/>
+            <TaskList api="https://task-ojt.onrender.com/tasks?today=true&status=initial&status=working"/>
         </>
     )
 }

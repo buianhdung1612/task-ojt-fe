@@ -6,7 +6,7 @@ export const UpComingPage = () => {
         <>
             <Title title="Upcoming"/>
 
-            <TaskList api="https://task-ojt.onrender.com/tasks"/>
+            <TaskList api="https://task-ojt.onrender.com/tasks?status=initial&status=working"/>
         </>
     )
 }
