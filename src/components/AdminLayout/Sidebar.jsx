@@ -53,7 +53,7 @@ function Sidebar() {
         </Link>
       </div>
 
-      <style jsx>{`
+      <style>{`
         .nav-link {
           display: flex;
           align-items: center;

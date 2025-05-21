@@ -1,5 +1,76 @@
 @import "tailwindcss";
 
+html,
+body,
+#root {
+  margin: 0;
+  padding: 0;
+  height: auto;
+}
+
+/* Trung */
+.custom-scroll::-webkit-scrollbar {
+  width: 6px;
+  /* Độ rộng của thanh cuộn dọc */
+}
+
+.custom-scroll::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+  /* Màu của thanh cuộn */
+  border-radius: 10px;
+  /* Bo tròn */
+}
+
+.custom-scroll::-webkit-scrollbar-track {
+  background: transparent;
+  /* Nền của track */
+}
+
+/* End Trung */
+
+a.active {
+  background-color: #ffefe5;
+}
+
+a.active svg {
+  color: #dc4c3e;
+}
+
+a.active div {
+  color: #a81f00;
+}
+
+.register {
+  box-shadow: 0 3px 20px rgba(0, 0, 0, .15);
+}
+
+.btn-add-task:hover .icon-add {
+  background-color: #CF4E3E;
+  color: #fff;
+}
+
+.icon-wrapper .icon-finished {
+  display: none;
+}
+
+.icon-wrapper:hover .icon-finished {
+  display: block;
+}
+
+.icon-wrapper:hover .icon-finish {
+  display: none;
+}
+
+.task-item .icon-delete,
+.task-item .icon-edit {
+  display: none;
+}
+
+.task-item:hover .icon-delete,
+.task-item:hover .icon-edit {
+  display: block;
+}@import "tailwindcss";
+
 #root {
   max-width: 1280px;
   margin: 0 auto;
