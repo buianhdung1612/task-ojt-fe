@@ -31,7 +31,6 @@ export const TaskList = (props) => {
     const [editTask, setEditTask] = useState({ title: '', content: '', timeStart: '', timeFinish: '' });
     const [selectedTask, setSelectedTask] = useState(null);
 
-
     const fetchApi = () => {
         fetch(api, {
             headers: { Authorization: `Bearer ${token}` }

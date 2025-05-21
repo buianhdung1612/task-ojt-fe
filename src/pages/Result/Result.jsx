@@ -17,6 +17,7 @@ import { FaRegUserCircle } from "react-icons/fa";
 import Avatar from '@mui/material/Avatar';
 import Stack from '@mui/material/Stack';
 import { Trash2, X } from "lucide-react";
+import { FaCheckCircle } from "react-icons/fa";
 
 export const ResultPage = () => {
   const [tasks, setTasks] = useState([]);
@@ -278,12 +279,19 @@ export const ResultPage = () => {
             >
               <div className='w-full flex items-center'>
                 <div className='flex items-center flex-1'>
-                  <div className='icon-wrapper' onClick={() => handleClickFinish(task._id)}>
-                    <LiaCircleSolid className='text-[24px] text-[#999999] icon-finish' />
-                    <CiCircleCheck className='text-[22px] text-[#999999] icon-finished' />
-                  </div>
+                  {task.status != "finish" ? (
+                    <div className='icon-wrapper' onClick={() => handleClickFinish(task._id)}>
+                      <LiaCircleSolid className='text-[24px] text-[#999999] icon-finish' />
+                      <CiCircleCheck className='text-[22px] text-[#999999] icon-finished' />
+                    </div>
+                  ) : (
+                    <div>
+                      <FaCheckCircle className='text-[18px] text-[#999999]' />
+                    </div>
+                  )}
+
                   <div onClick={() => handleTaskClick(task)} className='ml-[8px] flex-1 mt-[12px]'>
-                    <div className='text-[14px] text-[#202020]'>
+                    <div className={'text-[14px] text-[#202020] ' + (task.status == "finish" ? "text-[#999999] line-through" : "")}>
                       <span className="task-item-text" style={{
                         wordBreak: 'break-word'
                       }}>{task.title}</span>
@@ -333,10 +341,12 @@ export const ResultPage = () => {
               </div>
               <div className='flex items-start justify-between mt-[10px]'>
                 <div className='relative inner-assign'>
-                  <div className='ml-[25px] px-[6px] py-[3px] font-[400] hover:bg-[#E9F2FE] hover:border-none justify-center w-[100px] rounded-[5px] text-[13px] text-[#1E7EE2] flex items-center border boder-solid border-[#e6e6e6]'>
-                    <MdOutlineNewLabel />
-                    <span className='ml-[5px]'>Assignee</span>
-                  </div>
+                  {task.status != "finish" && (
+                    <div className='ml-[25px] px-[6px] py-[3px] font-[400] hover:bg-[#E9F2FE] hover:border-none justify-center w-[100px] rounded-[5px] text-[13px] text-[#1E7EE2] flex items-center border boder-solid border-[#e6e6e6]'>
+                      <MdOutlineNewLabel />
+                      <span className='ml-[5px]'>Assignee</span>
+                    </div>
+                  )}
                   {users.length > 0 && (
                     <div className='w-[284px] dropdown absolute z-50 bg-[#fff] left-[100%] top-[0%] rounded-[5px] border border-solid border-[#e6e6e6] text-[14px]'>
                       {users.map((user, index) => (
