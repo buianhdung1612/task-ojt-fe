@@ -6,10 +6,9 @@ import { TbCalendarMonth } from "react-icons/tb";
 import { HiOutlineSquares2X2 } from "react-icons/hi2";
 import { MdLogout } from "react-icons/md";
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Search } from '../Search/Search';
 import Cookies from "js-cookie";
-import { UserContext } from '../Route/ProtectedRoute';
 
 const menu = [
     {
@@ -30,9 +29,10 @@ const menu = [
 ]
 
 export const Sider = (props) => {
-    // const user = useContext(UserContext);
+    const token = Cookies.get("token");
     const [open, setOpen] = useState(false);
     const [keyword, setKeyword] = useState(null);
+    const [user, setUser] = useState(undefined);
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -42,6 +42,20 @@ export const Sider = (props) => {
         const q = params.get("q");
         setKeyword(q);
     }, [location.search]);
+
+    useEffect(() => {
+        fetch(`https://task-ojt.onrender.com/users/profile`, {
+            headers: { Authorization: `Bearer ${token}` },
+        })
+            .then((res) => res.json())
+            .then((data) => {
+                if (data.code === "success") {
+                    setUser(data.data);
+                } else {
+                    setUser(null);
+                }
+            });
+    }, []);
 
     const handleSearch = (kw) => {
         setKeyword(kw);
@@ -56,13 +70,13 @@ export const Sider = (props) => {
     }
     return (
         <>
-            <div className="w-[280px] !h-screen bg-[#fcfaf8] p-[4px] flex flex-col">
+            <div className="w-[280px] !h-screen bg-[#fcfaf8] p-[4px] flex flex-col fixed">
                 <div className="p-[12px]">
                     <div className='flex items-center rounded-[6px] hover:bg-[#f2efed] cursor-pointer'>
                         <div className="w-[40px] aspect-square p-1 ml-1.5">
                             <img src={messiImg} className="w-full h-full object-cover rounded-full" />
                         </div>
-                        <div className="text-[14px] text-[#202020] font-[600] ml-[10px]">Bùi Anh Dũng</div>
+                        <div className="text-[14px] text-[#202020] font-[600] ml-[10px]">{user?.fullname}</div>
                     </div>
                 </div>
                 <div className='px-[12px] flex flex-1 flex-col'>

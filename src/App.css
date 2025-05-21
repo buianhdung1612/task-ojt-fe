@@ -61,12 +61,28 @@ a.active div {
   display: none;
 }
 
-.task-item .icon-delete,
-.task-item .icon-edit {
+/* .task-item .icon-delete,
+.task-item .icon-edit,
+.task-item .select-status {
   display: none;
 }
 
 .task-item:hover .icon-delete,
-.task-item:hover .icon-edit {
+.task-item:hover .icon-edit,
+.task-item:hover .select-status {
   display: block;
+} */
+
+
+.inner-assign .dropdown {
+  display: none;
+}
+
+.inner-assign:hover .dropdown {
+  display: block;
+}
+
+.react-date-picker__wrapper {
+  border: none !important;
+  padding: 0;
 }
