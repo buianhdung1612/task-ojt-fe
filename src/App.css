@@ -61,17 +61,15 @@ a.active div {
   display: none;
 }
 
-/* .task-item .icon-delete,
-.task-item .icon-edit,
-.task-item .select-status {
-  display: none;
+.task-item .icon-delete,
+.task-item .icon-edit {
+  visibility: hidden;
 }
 
 .task-item:hover .icon-delete,
-.task-item:hover .icon-edit,
-.task-item:hover .select-status {
-  display: block;
-} */
+.task-item:hover .icon-edit {
+  visibility: visible;
+}
 
 .inner-assign .dropdown {
   display: none;
