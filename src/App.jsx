@@ -15,6 +15,7 @@ import Layout from './components/AdminLayout/Layout'
 import UserManagement from './components/Admin/UserManagement'
 import ContentManagement from './components/Admin/ContentManagement'
 import { createContext } from 'react'
+import { FilterDetail } from './pages/Filters/FilterDetail'
 
 export const ToastContext = createContext();
 
@@ -30,6 +31,7 @@ function App() {
               <Route path="/upcoming" element={<ProtectedRoute><UpComingPage /></ProtectedRoute>} />
               <Route path="/today" element={<ProtectedRoute><TodayPage /></ProtectedRoute>} />
               <Route path="/filters" element={<ProtectedRoute><FiltersPage /></ProtectedRoute>} />
+              <Route path="/filters/detail" element={<ProtectedRoute><FilterDetail /></ProtectedRoute>} />
               <Route path="/search/result" element={<ProtectedRoute><ResultPage /></ProtectedRoute>} />
             </Route>
 
