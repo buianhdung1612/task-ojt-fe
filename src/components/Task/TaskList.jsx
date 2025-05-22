@@ -37,15 +37,24 @@ export const TaskList = (props) => {
         })
             .then(res => res.json())
             .then(data => {
-                setTasks(data);
+                if (Array.isArray(data)) {
+                    setTasks(data);
 
-                const initialListUsersPerTask = {};
-                data.forEach(task => {
-                    if (task.listUser) {
-                        initialListUsersPerTask[task._id] = task.listUser;
-                    }
-                });
-                setListUsersPerTask(initialListUsersPerTask);
+                    const initialListUsersPerTask = {};
+                    data.forEach(task => {
+                        if (task.listUser) {
+                            initialListUsersPerTask[task._id] = task.listUser;
+                        }
+                    });
+                    setListUsersPerTask(initialListUsersPerTask);
+                } else {
+                    console.error('Data không phải là mảng:', data);
+                    setTasks([]);
+                }
+            })
+            .catch(error => {
+                console.error('Lỗi khi tải dữ liệu:', error);
+                setTasks([]);
             });
     }
 
@@ -55,8 +64,17 @@ export const TaskList = (props) => {
         })
             .then(res => res.json())
             .then(data => {
-                setUsers(data.data);
+                if (data && data.data && Array.isArray(data.data)) {
+                    setUsers(data.data);
+                } else {
+                    console.error('Data.data không phải là mảng:', data);
+                    setUsers([]);
+                }
             })
+            .catch(error => {
+                console.error('Lỗi khi tải danh sách người dùng:', error);
+                setUsers([]);
+            });
     }
 
     useEffect(() => {
@@ -321,7 +339,7 @@ export const TaskList = (props) => {
                 </div>
             )}
             <ul>
-                {tasks && tasks.map((task, index) => (
+                {Array.isArray(tasks) && tasks.length > 0 ? tasks.map((task, index) => (
                     <div key={index}>
                         <li
                             className={`task-item task-item w-full  cursor-pointer pb-[30px] border-b border-solid border-[#eee] ${editingTaskId === task._id ? 'hidden' : ''}`}
@@ -482,7 +500,7 @@ export const TaskList = (props) => {
                             </div>
                         )}
                     </div>
-                ))}
+                )) : <li className="text-center py-4 text-gray-500">Không có task nào</li>}
             </ul>
 
             {/* Add task */}
