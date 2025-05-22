@@ -171,7 +171,7 @@ const Dashboard = () => {
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-6">Dashboard</h1>
-
+      
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         {/* Stats cards */}
         <div className="bg-white rounded-lg shadow p-6">
@@ -181,7 +181,7 @@ const Dashboard = () => {
             <span className="text-green-500 text-xs font-medium">+{statistics.new_users_today} today</span>
           </div>
         </div>
-
+        
         <div className="bg-white rounded-lg shadow p-6">
           <h3 className="text-gray-500 text-sm font-medium">Total Tasks</h3>
           <p className="text-3xl font-bold text-gray-800 mt-2">{statistics.total_tasks.toLocaleString()}</p>
@@ -189,7 +189,7 @@ const Dashboard = () => {
             <span className="text-gray-500 text-xs">{statistics.active_tasks.toLocaleString()} active</span>
           </div>
         </div>
-
+        
         <div className="bg-white rounded-lg shadow p-6">
           <h3 className="text-gray-500 text-sm font-medium">Completion Rate</h3>
           <p className="text-3xl font-bold text-gray-800 mt-2">{statistics.completion_rate}%</p>
@@ -198,7 +198,7 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
-
+      
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         {/* Line chart for user activity */}
         <div className="bg-white rounded-lg shadow p-6">
@@ -220,7 +220,7 @@ const Dashboard = () => {
             </ResponsiveContainer>
           </div>
         </div>
-
+        
         {/* Pie chart for task distribution */}
         <div className="bg-white rounded-lg shadow p-6">
           <h2 className="text-lg font-medium mb-4">Task Distribution</h2>
@@ -248,7 +248,7 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
-
+      
       <div className="bg-white rounded-lg shadow mb-6">
         <div className="p-6 border-b border-gray-200">
           <h2 className="text-lg font-medium">Newly Registered Users</h2>
@@ -268,9 +268,9 @@ const Dashboard = () => {
                   <tr key={user._id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
-                        <img
-                          src="/Images/avatar.jpg"
-                          alt="User Avatar"
+                        <img 
+                          src="/Images/avatar.jpg" 
+                          alt="User Avatar" 
                           className="h-10 w-10 rounded-full object-cover"
                         />
                         <div className="ml-4">

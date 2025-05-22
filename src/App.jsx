@@ -34,7 +34,7 @@ function App() {
             </Route>
 
             <Route element={<Layout />}>
-              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/admin" element={<Dashboard />} />
               <Route path="/users" element={<UserManagement />} />
               <Route path="/content" element={<ContentManagement />} />
             </Route>
