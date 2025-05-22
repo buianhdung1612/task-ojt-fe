@@ -18,6 +18,7 @@ import Avatar from '@mui/material/Avatar';
 import Stack from '@mui/material/Stack';
 import { Trash2, X } from "lucide-react";
 import { FaCheckCircle } from "react-icons/fa";
+import { ToastContext } from "../../App";
 
 export const ResultPage = () => {
   const [tasks, setTasks] = useState([]);
@@ -30,6 +31,8 @@ export const ResultPage = () => {
   const [users, setUsers] = useState([]);
   const [selectedTask, setSelectedTask] = useState(null);
   const [listUsersPerTask, setListUsersPerTask] = useState({});
+  const { toast } = useContext(ToastContext);
+
 
   const fetchListUser = () => {
     fetch(`https://task-ojt.onrender.com/users/list`, {
@@ -108,10 +111,12 @@ export const ResultPage = () => {
       .then(data => {
         if (data.code == "success") {
           fetchApi();
+          toast.success(data.message);
           setEditingTaskId(null);
         }
         else {
           fetchApi();
+          toast.error(data.message);
           setEditingTaskId(null);
         }
       })
@@ -136,6 +141,8 @@ export const ResultPage = () => {
       .then(data => {
         if (data.code == "success") {
           fetchApi();
+          setSelectedTask(null);
+          toast.success(data.message);
         }
       })
   }
@@ -158,6 +165,7 @@ export const ResultPage = () => {
       .then(data => {
         if (data.code == "success") {
           fetchApi();
+          toast.success(data.message);
           setSelectedTask(null);
         }
       })
@@ -181,6 +189,7 @@ export const ResultPage = () => {
       .then(data => {
         if (data.code == "success") {
           fetchApi();
+          toast.success(data.message);
           setSelectedTask(null)
         }
       })
@@ -258,9 +267,11 @@ export const ResultPage = () => {
         console.log(data);
         if (data.code == "success") {
           fetchApi();
+          toast.success(data.message);
         }
         else {
           fetchApi();
+          toast.error(data.message);
         }
       })
   }
@@ -310,29 +321,46 @@ export const ResultPage = () => {
                   </div>
                 </div>
                 <div className='flex items-center'>
-                  <FormControl className='select-status' variant="standard" style={{
-                    width: "140px", marginBottom: "10px", marginLeft: "20%", marginRight: "20px"
-                  }}>
-                    <Select
-                      id="demo-simple-select"
-                      value={task.status}
-                      label="Status"
-                      onChange={(event) => handleChangeStatus(task._id, event)}
-                    >
-                      <MenuItem value="initial">To do</MenuItem>
-                      <MenuItem value="doing">Working</MenuItem>
-                      <MenuItem value="finish">Completed</MenuItem>
-                    </Select>
-                  </FormControl>
-                  <Tooltip title="Edit task" placement="top">
-                    <GoPencil
-                      onClick={() => {
-                        handleEditClick(task);
-                      }}
-                      className='icon-edit text-[20px] text-[#999999] mr-[15px] w-7 h-7 p-1 rounded-[5px] hover:bg-[#EEEEEE]'
-                    />
-                  </Tooltip>
-                  {user && task.createdBy == user._id && (
+                  {task.status !== "finish" ? (
+                    <FormControl className='select-status' variant="standard" style={{
+                      width: "140px", marginLeft: "20%", marginRight: "20px"
+                    }}>
+                      <Select
+                        id="demo-simple-select"
+                        value={task.status}
+                        label="Status"
+                        onChange={(event) => handleChangeStatus(task._id, event)}
+                      >
+                        <MenuItem value="initial">To do</MenuItem>
+                        <MenuItem value="doing">Working</MenuItem>
+                        <MenuItem value="finish">Completed</MenuItem>
+                      </Select>
+                    </FormControl>
+                  ) : (
+                    <FormControl className='select-status' variant="standard" style={{
+                      width: "140px", marginLeft: "20%", marginRight: "20px"
+                    }}>
+                      <Select
+                        id="demo-simple-select"
+                        value={task.status}
+                        label="Status"
+                        onChange={(event) => handleChangeStatus(task._id, event)}
+                      >
+                        <MenuItem value="finish">Completed</MenuItem>
+                      </Select>
+                    </FormControl>
+                  )}
+                  {task.status != "finish" && (
+                    <Tooltip title="Edit task" placement="top">
+                      <GoPencil
+                        onClick={() => {
+                          handleEditClick(task);
+                        }}
+                        className='icon-edit text-[20px] text-[#999999] mr-[15px] w-7 h-7 p-1 rounded-[5px] hover:bg-[#EEEEEE]'
+                      />
+                    </Tooltip>
+                  )}
+                  {user && task.createdBy == user._id && task.status != "finish" && (
                     <Tooltip title="Delete" placement="top">
                       <RiDeleteBin6Line onClick={() => handleDelete(task._id)} className='icon-delete text-[20px] text-[#999999] w-7 h-7 p-1 rounded-[5px] hover:bg-[#EEEEEE]' />
                     </Tooltip>
@@ -365,13 +393,13 @@ export const ResultPage = () => {
                           style={{ width: "30px", height: "30px" }}
                           {...stringAvatar(item.fullname)}
                         />
-                        {user && (item._id !== user._id) && (task.createdBy !== item._id) && (
+                        {user && (item._id !== user._id) && (task.createdBy !== item._id) && task.status != "finish" && (
                           <div onClick={() => handleRemoveUserFromTask(task._id, item._id)} className="absolute -top-3.5 right-0 text-red-500 text-[20px] text-sm cursor-pointer transition-all">x</div>
                         )}
                       </div>
                     ))}
                   </Stack>
-                  {(listUsersPerTask[task._id] || []).length > 0 && (
+                  {(listUsersPerTask[task._id] || []).length > 0 && task.status != "finish" && (
                     <button
                       onClick={() => {
                         handleAssign(task._id, listUsersPerTask[task._id])
@@ -458,14 +486,15 @@ export const ResultPage = () => {
                 Task details
               </h2>
               <div className="flex items-center gap-4">
-                <button
-                  className="text-red-500 hover:text-red-700 transition cursor-pointer"
-                  onClick={() => handleDeleteTask(selectedTask._id)}
-                  title="Delete task"
-                >
-                  <Trash2 size={20} />
-                </button>
-
+                {selectedTask.status != "finish" && (
+                  <button
+                    className="text-red-500 hover:text-red-700 transition cursor-pointer"
+                    onClick={() => handleDelete(selectedTask._id)}
+                    title="Delete task"
+                  >
+                    <Trash2 size={20} />
+                  </button>
+                )}
                 <button
                   className="text-gray-600 hover:text-black transition cursor-pointer"
                   onClick={() => setSelectedTask(null)}
@@ -479,10 +508,16 @@ export const ResultPage = () => {
             <div className="flex flex-1 overflow-hidden">
               <div className="w-2/3 px-8 overflow-y-auto">
                 <div className='flex items-center flex-1'>
-                  <div className='icon-wrapper' onClick={() => handleClickFinish(selectedTask._id)}>
-                    <LiaCircleSolid className='text-[24px] text-[#999999] icon-finish cursor-pointer' />
-                    <CiCircleCheck className='text-[22px] text-[#999999] icon-finished cursor-pointer' />
-                  </div>
+                  {selectedTask.status != "finish" ? (
+                    <div className='icon-wrapper' onClick={() => handleClickFinish(selectedTask._id)}>
+                      <LiaCircleSolid className='text-[24px] text-[#999999] icon-finish' />
+                      <CiCircleCheck className='text-[22px] text-[#999999] icon-finished' />
+                    </div>
+                  ) : (
+                    <div>
+                      <FaCheckCircle className='text-[18px] text-[#999999]' />
+                    </div>
+                  )}
                   <div className='ml-[8px] flex-1 mt-[20px]'>
                     <div className='text-[20px] text-[#202020] font-[600]'>
                       <span className="task-item-text" style={{
@@ -502,20 +537,35 @@ export const ResultPage = () => {
                     )}
                   </div>
                   <div className='flex items-center'>
-                    <FormControl className='select-status' variant="standard" style={{
-                      width: "140px", marginLeft: "20%", marginRight: "20px"
-                    }}>
-                      <Select
-                        id="demo-simple-select"
-                        value={selectedTask.status}
-                        label="Status"
-                        onChange={(event) => handleChangeStatus(selectedTask._id, event)}
-                      >
-                        <MenuItem value="initial">To do</MenuItem>
-                        <MenuItem value="doing">Working</MenuItem>
-                        <MenuItem value="finish">Completed</MenuItem>
-                      </Select>
-                    </FormControl>
+                    {selectedTask.status !== "finish" ? (
+                      <FormControl className='select-status' variant="standard" style={{
+                        width: "140px", marginLeft: "20%", marginRight: "20px"
+                      }}>
+                        <Select
+                          id="demo-simple-select"
+                          value={selectedTask.status}
+                          label="Status"
+                          onChange={(event) => handleChangeStatus(selectedTask._id, event)}
+                        >
+                          <MenuItem value="initial">To do</MenuItem>
+                          <MenuItem value="doing">Working</MenuItem>
+                          <MenuItem value="finish">Completed</MenuItem>
+                        </Select>
+                      </FormControl>
+                    ) : (
+                      <FormControl className='select-status' variant="standard" style={{
+                        width: "140px", marginLeft: "20%", marginRight: "20px"
+                      }}>
+                        <Select
+                          id="demo-simple-select"
+                          value={selectedTask.status}
+                          label="Status"
+                          onChange={(event) => handleChangeStatus(selectedTask._id, event)}
+                        >
+                          <MenuItem value="finish">Completed</MenuItem>
+                        </Select>
+                      </FormControl>
+                    )}
                   </div>
                 </div>
                 <div className='mt-[30px]'>

@@ -5,7 +5,7 @@ import DatePicker from "react-date-picker";
 import "react-date-picker/dist/DatePicker.css";
 import "react-calendar/dist/Calendar.css";
 import { Title } from "../../components/Title/Title";
-
+import { Trash2, X } from "lucide-react";
 import { LiaCircleSolid } from "react-icons/lia";
 import { GoPencil } from "react-icons/go";
 import { RiDeleteBin6Line } from "react-icons/ri";
@@ -19,8 +19,10 @@ import Tooltip from '@mui/material/Tooltip';
 import Avatar from '@mui/material/Avatar';
 import Stack from '@mui/material/Stack';
 import { UserContext } from "../../components/Route/ProtectedRoute";
+import { ToastContext } from "../../App";
 
 export const UpComingPage = () => {
+    const [selectedTask, setSelectedTask] = useState(null);
     const token = Cookies.get("token");
     const [value, setValue] = useState(new Date());
     const [weekDays, setWeekDays] = useState([]);
@@ -42,6 +44,7 @@ export const UpComingPage = () => {
     const [listUsersPerTask, setListUsersPerTask] = useState({});
     const [editingTaskId, setEditingTaskId] = useState(null);
     const [editTask, setEditTask] = useState({ title: '', content: '', timeStart: '', timeFinish: '' });
+    const { toast } = useContext(ToastContext);
 
     const fetchApi = () => {
         fetch(`https://task-ojt.onrender.com/tasks?status=initial&status=doing`, {
@@ -131,6 +134,16 @@ export const UpComingPage = () => {
         scrollToSelectedDate();
     }, [selectedDate]);
 
+    const handleTaskClick = (task) => {
+        if (task.timeStart) {
+            task.timeStart = task.timeStart.slice(0, 16);
+        }
+        if (task.timeFinish) {
+            task.timeFinish = task.timeFinish.slice(0, 16);
+        }
+        setSelectedTask(task);
+    };
+
     useEffect(() => {
         let timeoutId;
         const handleScroll = () => {
@@ -218,6 +231,7 @@ export const UpComingPage = () => {
             .then(data => {
                 if (data.code == "success") {
                     fetchApi();
+                    toast.success(data.message)
                     setTimeStart('');
                     setTimeFinish('');
                     setContent('');
@@ -267,6 +281,7 @@ export const UpComingPage = () => {
                     setTitle('');
                     setShowForm(false);
                     setEditingTaskId(null);
+                    toast.success(data.message)
                 }
                 else {
                     fetchApi();
@@ -276,6 +291,7 @@ export const UpComingPage = () => {
                     setTitle('');
                     setShowForm(false);
                     setEditingTaskId(null);
+                    toast.error(data.message)
                 }
             })
     };
@@ -299,6 +315,8 @@ export const UpComingPage = () => {
             .then(data => {
                 if (data.code == "success") {
                     fetchApi();
+                    toast.success(data.message);
+                    setSelectedTask(null);
                 }
             })
     }
@@ -321,6 +339,7 @@ export const UpComingPage = () => {
             .then(data => {
                 if (data.code == "success") {
                     fetchApi();
+                    toast.success(data.message)
                 }
             })
     }
@@ -343,6 +362,8 @@ export const UpComingPage = () => {
             .then(data => {
                 if (data.code == "success") {
                     fetchApi();
+                    setSelectedTask(null);
+                    toast.success(data.message)
                 }
             })
     }
@@ -416,12 +437,13 @@ export const UpComingPage = () => {
         })
             .then(res => res.json())
             .then(data => {
-                console.log(data);
                 if (data.code == "success") {
                     fetchApi();
+                    toast.success(data.message)
                 }
                 else {
                     fetchApi();
+                    toast.error(data.message)
                 }
             })
     }
@@ -637,7 +659,7 @@ export const UpComingPage = () => {
                                                     <LiaCircleSolid className='text-[24px] text-[#999999] icon-finish' />
                                                     <CiCircleCheck className='text-[22px] text-[#999999] icon-finished' />
                                                 </div>
-                                                <div className='ml-[8px] flex-1 mt-[12px]'>
+                                                <div onClick={() => handleTaskClick(task)} className='ml-[8px] flex-1 mt-[12px]'>
                                                     <div className='text-[14px] text-[#202020]'>
                                                         <span className="task-item-text" style={{
                                                             wordBreak: 'break-word'
@@ -792,6 +814,130 @@ export const UpComingPage = () => {
                     </div>
                 ))}
             </div>
+            {/* Popup detail task */}
+            {selectedTask && (
+                <div
+                    className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm"
+                    onClick={() => setSelectedTask(null)}
+                >
+                    <div
+                        className="bg-white rounded-xl shadow-2xl w-[50%] max-w-6xl h-[80vh] flex flex-col overflow-hidden"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <div className="flex justify-between items-center px-6 py-4 border-b border-gray-200">
+                            <h2 className="text-xl font-semibold text-gray-800">
+                                Task details
+                            </h2>
+                            <div className="flex items-center gap-4">
+                                <button
+                                    className="text-red-500 hover:text-red-700 transition cursor-pointer"
+                                    onClick={() => handleDelete(selectedTask._id)}
+                                    title="Delete task"
+                                >
+                                    <Trash2 size={20} />
+                                </button>
+
+                                <button
+                                    className="text-gray-600 hover:text-black transition cursor-pointer"
+                                    onClick={() => setSelectedTask(null)}
+                                    title="Close"
+                                >
+                                    <X size={20} />
+                                </button>
+                            </div>
+                        </div>
+
+                        <div className="flex flex-1 overflow-hidden">
+                            <div className="w-2/3 px-8 overflow-y-auto">
+                                <div className='flex items-center flex-1'>
+                                    <div className='icon-wrapper' onClick={() => handleClickFinish(selectedTask._id)}>
+                                        <LiaCircleSolid className='text-[24px] text-[#999999] icon-finish cursor-pointer' />
+                                        <CiCircleCheck className='text-[22px] text-[#999999] icon-finished cursor-pointer' />
+                                    </div>
+                                    <div className='ml-[8px] flex-1 mt-[20px]'>
+                                        <div className='text-[20px] text-[#202020] font-[600]'>
+                                            <span className="task-item-text" style={{
+                                                wordBreak: 'break-word'
+                                            }}>{selectedTask.title}</span>
+                                        </div>
+                                        {selectedTask.content && (
+                                            <div
+                                                className="text-[14px] text-[#202020]"
+                                                style={{
+                                                    whiteSpace: 'pre-line',
+                                                    wordBreak: 'break-word'
+                                                }}
+                                            >
+                                                {selectedTask.content}
+                                            </div>
+                                        )}
+                                    </div>
+                                    <div className='flex items-center'>
+                                        <FormControl className='select-status' variant="standard" style={{
+                                            width: "140px", marginLeft: "20%", marginRight: "20px"
+                                        }}>
+                                            <Select
+                                                id="demo-simple-select"
+                                                value={selectedTask.status}
+                                                label="Status"
+                                                onChange={(event) => handleChangeStatus(selectedTask._id, event)}
+                                            >
+                                                <MenuItem value="initial">To do</MenuItem>
+                                                <MenuItem value="doing">Working</MenuItem>
+                                                <MenuItem value="finish">Completed</MenuItem>
+                                            </Select>
+                                        </FormControl>
+                                    </div>
+                                </div>
+                                <div className='mt-[30px]'>
+                                    <div className="relative">
+                                        <label htmlFor="start-time" className="text-[15px] text-[#202020] block">Time Start</label>
+                                        <input
+                                            id="start-time"
+                                            type="datetime-local"
+                                            value={selectedTask.timeStart}
+                                            onChange={e => handleEditChange('timeStart', e.target.value)}
+                                            className="w-full p-2 rounded border border-[#d1d5db] bg-[#f9fafb] my-[10px] transition-colors"
+                                        />
+                                    </div>
+                                    <div className="relative">
+                                        <label htmlFor="end-time" className="text-[15px] text-[#202020] block mb-1">Time Finish</label>
+                                        <input
+                                            id="end-time"
+                                            type="datetime-local"
+                                            value={selectedTask.timeFinish}
+                                            onChange={e => handleEditChange('timeFinish', e.target.value)}
+                                            className="w-full p-2 rounded border border-[#d1d5db] bg-[#f9fafb] my-[10px] transition-colors"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="w-1/3 bg-[#fcfbf9] p-6 text-sm overflow-y-auto">
+                                <div className="mb-4">
+                                    <p className="font-semibold text-gray-700">📁 Assignee</p>
+                                </div>
+                                {selectedTask.listUser.length > 0 && (
+                                    <div className="space-y-3">
+                                        {selectedTask.listUser.map((item, index) => (
+                                            <div key={index} className="flex items-center gap-3 bg-white p-2 rounded shadow-sm border border-gray-200">
+                                                <div className="w-8 h-8 rounded-full bg-[#e0e0e0] flex items-center justify-center text-xs font-bold text-gray-700 uppercase">
+                                                    {item.fullname
+                                                        .split(' ')
+                                                        .map(word => word[0])
+                                                        .slice(0, 2)
+                                                        .join('')}
+                                                </div>
+                                                <div className="text-gray-800">{item.fullname}</div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

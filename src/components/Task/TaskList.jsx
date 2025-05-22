@@ -14,6 +14,7 @@ import { FaRegUserCircle } from "react-icons/fa";
 import Avatar from '@mui/material/Avatar';
 import Stack from '@mui/material/Stack';
 import { Trash2, X } from "lucide-react";
+import { ToastContext } from '../../App';
 
 export const TaskList = (props) => {
     const { api } = props;
@@ -30,6 +31,7 @@ export const TaskList = (props) => {
     const [editingTaskId, setEditingTaskId] = useState(null);
     const [editTask, setEditTask] = useState({ title: '', content: '', timeStart: '', timeFinish: '' });
     const [selectedTask, setSelectedTask] = useState(null);
+    const { toast } = useContext(ToastContext);
 
     const fetchApi = () => {
         fetch(api, {
@@ -102,6 +104,7 @@ export const TaskList = (props) => {
             .then(data => {
                 if (data.code == "success") {
                     fetchApi();
+                    toast.success(data.message);
                     setTimeStart('');
                     setTimeFinish('');
                     setContent('');
@@ -145,6 +148,7 @@ export const TaskList = (props) => {
             .then(data => {
                 if (data.code == "success") {
                     fetchApi();
+                    toast.success(data.message)
                     setTimeStart('');
                     setTimeFinish('');
                     setContent('');
@@ -154,6 +158,7 @@ export const TaskList = (props) => {
                 }
                 else {
                     fetchApi();
+                    toast.error(data.message)
                     setTimeStart('');
                     setTimeFinish('');
                     setContent('');
@@ -182,7 +187,9 @@ export const TaskList = (props) => {
             .then(res => res.json())
             .then(data => {
                 if (data.code == "success") {
+                    toast.success(data.message)
                     fetchApi();
+                    setSelectedTask(null);
                 }
             })
     }
@@ -205,6 +212,7 @@ export const TaskList = (props) => {
             .then(data => {
                 if (data.code == "success") {
                     fetchApi();
+                    toast.success(data.message)
                     setSelectedTask(null);
                 }
             })
@@ -228,6 +236,7 @@ export const TaskList = (props) => {
             .then(data => {
                 if (data.code == "success") {
                     fetchApi();
+                    toast.success(data.message)
                     setSelectedTask(null)
                 }
             })
@@ -305,9 +314,11 @@ export const TaskList = (props) => {
                 console.log(data);
                 if (data.code == "success") {
                     fetchApi();
+                    toast.success(data.message)
                 }
                 else {
                     fetchApi();
+                    toast.error(data.message)
                 }
             })
     }
@@ -570,7 +581,7 @@ export const TaskList = (props) => {
                             <div className="flex items-center gap-4">
                                 <button
                                     className="text-red-500 hover:text-red-700 transition cursor-pointer"
-                                    onClick={() => handleDeleteTask(selectedTask._id)}
+                                    onClick={() => handleDelete(selectedTask._id)}
                                     title="Delete task"
                                 >
                                     <Trash2 size={20} />
