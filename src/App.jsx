@@ -36,9 +36,9 @@ function App() {
             </Route>
 
             <Route element={<Layout />}>
-              <Route path="/admin/dashboard" element={<Dashboard />} />
-              <Route path="/admin/users" element={<UserManagement />} />
-              <Route path="/admin/content" element={<ContentManagement />} />
+              <Route path="/admin/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+              <Route path="/admin/users" element={<ProtectedRoute><UserManagement /></ProtectedRoute>} />
+              <Route path="/admin/content" element={<ProtectedRoute><ContentManagement /></ProtectedRoute>} />
             </Route>
 
             <Route path='/users/login' element={<LoginPage />} />
