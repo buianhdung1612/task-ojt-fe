@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { PiCalendarDuotone } from "react-icons/pi";
 import { TbCalendarMonth } from "react-icons/tb";
 import { HiOutlineSquares2X2 } from "react-icons/hi2";
@@ -7,6 +7,7 @@ import { RxCountdownTimer } from "react-icons/rx";
 import { Link } from 'react-router-dom';
 import { CiSearch } from "react-icons/ci";
 import Cookies from "js-cookie";
+import Highlighter from 'react-highlight-words';
 
 export function Search({ onClose, onSearch }) {
     const token = Cookies.get("token");
@@ -32,6 +33,46 @@ export function Search({ onClose, onSearch }) {
     const handleDeleteRecent = (itemToDelete) => {
         setRecentSearches(prev => prev.filter(item => item !== itemToDelete));
     };
+
+    // Phần search ra gợi ý (mới làm)
+    useEffect(() => {
+        if (!inputValue.trim()) {
+            setSuggestions([]);
+            return;
+        }
+        // Bỏ API show all việc làm 
+        fetch(`https://task-ojt.onrender.com/tasks?keyword=${inputValue}`, {
+            headers: { Authorization: `Bearer ${token}` }
+        })
+            .then((res) => res.json())
+            .then((data) => {
+                const filtered = data.filter(item =>
+                    // thay title bằng trường  tên công việc á
+                    item.title.toLowerCase().includes(inputValue.toLowerCase())
+                );
+                setSuggestions(filtered);
+            })
+            .catch((err) => {
+                console.error("Failed to fetch suggestions:", err);
+                setSuggestions([]);
+            });
+    }, [inputValue]);
+
+    // Xử lý click
+    const Click = (suggestion) => {
+        setRecentSearches(prev => {
+            const updated = [suggestion, ...prev.filter(item => item !== suggestion)];
+            return updated.slice(0, 7);
+        });
+
+        onSearch(suggestion);
+        onClose();
+
+        setInputValue('');
+        setSuggestions([]);
+    };
+
+
 
     // const handleClickSearch = () => {
     //     const keyword = inputValue;
@@ -60,18 +101,24 @@ export function Search({ onClose, onSearch }) {
                 <div className='custom-scroll overflow-y-auto h-[395px]'>
 
 
-                    {/* Suggestions // Đợi API */}
-                    <div className="ml-[15px] mt-2 max-h-[150px]">
+                    {/* Suggestions (mới làm) */}
+                    <div className="ml-[15px] mt-2 max-h-[100px] overflow-y-auto">
                         {suggestions.length > 0 ? (
-                            suggestions.map((item, idx) => (
-                                <div key={idx} className="py-1 px-2 hover:bg-gray-200 cursor-pointer">
-                                    {item}
+                            suggestions.map((item, idx) => (                                                           // thay title bằng trường  tên công việc á 
+                                <div key={idx} className="py-1 px-2 hover:bg-gray-200 cursor-pointer" onClick={() => Click(item.title)}>
+                                    <Highlighter
+                                        highlightClassName="bg-yellow-300"
+                                        searchWords={[inputValue]}
+                                        autoEscape={true}
+                                        textToHighlight={item.title}
+                                    />
                                 </div>
                             ))
                         ) : (
                             inputValue && <p className="text-gray-500 ">No results found</p>
                         )}
                     </div>
+
 
                     {/* Recent Searches */}
                     {recentSearches.length > 0 && (

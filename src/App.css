@@ -63,10 +63,23 @@ a.active div {
 
 .task-item .icon-delete,
 .task-item .icon-edit {
-  display: none;
+  visibility: hidden;
 }
 
 .task-item:hover .icon-delete,
 .task-item:hover .icon-edit {
+  visibility: visible;
+}
+
+.inner-assign .dropdown {
+  display: none;
+}
+
+.inner-assign:hover .dropdown {
   display: block;
+}
+
+.react-date-picker__wrapper {
+  border: none !important;
+  padding: 0;
 }
