@@ -36,18 +36,18 @@ function Sidebar() {
 
       <div className="py-2">
         <div className="px-4 py-2 text-xs uppercase text-gray-700 font-semibold">Overview</div>
-        <Link to="/dashboard" className={`nav-link ${isActive('/dashboard')}`}>
+        <Link to="/admin/dashboard" className={`nav-link ${isActive('/dashboard')}`}>
           <span className="w-5 h-5 mr-3 flex items-center justify-center">📊</span>
           Dashboard
         </Link>
         
         <div className="px-4 py-2 text-xs uppercase text-gray-700 font-semibold">Management</div>
-        <Link to="/users" className={`nav-link ${isActive('/users')}`}>
+        <Link to="/admin/users" className={`nav-link ${isActive('/users')}`}>
           <span className="w-5 h-5 mr-3 flex items-center justify-center">👥</span>
           User Management
         </Link>
         
-        <Link to="/content" className={`nav-link ${isActive('/content')}`}>
+        <Link to="/admin/content" className={`nav-link ${isActive('/content')}`}>
           <span className="w-5 h-5 mr-3 flex items-center justify-center">📝</span>
           Tasks Management
         </Link>

@@ -36,9 +36,9 @@ function App() {
             </Route>
 
             <Route element={<Layout />}>
-              <Route path="/admin" element={<Dashboard />} />
-              <Route path="/users" element={<UserManagement />} />
-              <Route path="/content" element={<ContentManagement />} />
+              <Route path="/admin/dashboard" element={<Dashboard />} />
+              <Route path="/admin/users" element={<UserManagement />} />
+              <Route path="/admin/content" element={<ContentManagement />} />
             </Route>
 
             <Route path='/users/login' element={<LoginPage />} />
