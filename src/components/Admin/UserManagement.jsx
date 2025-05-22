@@ -20,6 +20,7 @@ const UserManagement = () => {
       .then(res => res.json())
       .then(data => {
         if (data.code === 'success' && Array.isArray(data.users)) {
+          console.log(data.users);
           // Xử lý dữ liệu từ API thành format cần thiết
           const formattedUsers = data.users.map(user => ({
             id: user._id,
@@ -28,7 +29,7 @@ const UserManagement = () => {
             role: user.isAdmin ? 'admin' : 'user',
             status: user.status || 'active',
             joined: user.createdAt ? new Date(user.createdAt).toLocaleDateString() : new Date().toLocaleDateString(),
-            tasks: user.tasks?.length || 0,
+            taskLength: user.taskLength || 0,
             phone: user.phone || 'N/A',
             address: user.address || 'N/A'
           }));
@@ -135,7 +136,7 @@ const UserManagement = () => {
                       <div className="text-sm text-gray-500">{user.joined}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-500">{user.tasks}</div>
+                      <div className="text-sm text-gray-500">{user.taskLength}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <div className="flex justify-end space-x-2">

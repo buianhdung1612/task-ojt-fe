@@ -70,6 +70,14 @@ const ContentManagement = () => {
               timeStart: task.timeStart ? new Date(task.timeStart).toLocaleDateString() : ''
             };
           });
+
+          // Sắp xếp tasks từ mới nhất đến cũ nhất dựa trên createdAt hoặc timeStart
+          formattedTasks.sort((a, b) => {
+            const dateA = new Date(a.createdAt || a.timeStart || 0);
+            const dateB = new Date(b.createdAt || b.timeStart || 0);
+            return dateB - dateA; // Sắp xếp giảm dần (mới nhất lên đầu)
+          });
+
           setTasks(formattedTasks);
         }
         setIsLoading(false);
